@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ★ 검색에 걸릴 제목과 설명. 사람들이 실제로 검색하는 말을 넣으세요 -->
+<title>3만원대 선물 추천 · 슈크림마을 선물가게</title>
+<meta name="description" content="빈손으로 가기 애매한 자리, 뭘 들고 가지? 1분 테스트로 받는 사람에게 딱 맞는 3만원대 디저트 선물을 추천해드려요.">
+<meta property="og:title" content="3만원대 선물 추천 · 슈크림마을 선물가게">
+<meta property="og:description" content="1분 테스트로 찾는 딱 맞는 디저트 선물">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</head>
+<body class="has-sticky">
+
+<nav class="nav"><div class="wrap">
+  <a class="logo" href="index.html">🧁 <span id="shop-name">슈크림마을 선물가게</span></a>
+  <div id="nav-auth"></div>
+</div></nav>
+
+<!-- ① 후킹: 첫 화면에서 "누구를 위한 무엇인지" -->
+<header class="hero"><div class="wrap">
+  <div class="emoji">🎁</div>
+  <p class="eyebrow">3만원대 선물 추천</p>
+  <h1>빈손으로 가기 애매한 자리,<br>뭘 들고 가지?</h1>
+  <p class="lead">받는 사람과 자리만 고르면,<br>딱 맞는 디저트 선물을 1분 안에 골라드려요.</p>
+  <a class="btn main" href="test.html">1분 선물 테스트 시작하기 →</a>
+  <p class="sub">6문항 · 결과에서 바로 주문까지</p>
+</div></header>
+
+<!-- ② 문제: 고객이 실제로 하는 고민 -->
+<section style="padding-top:20px"><div class="wrap">
+  <h2>이런 고민, 해본 적 있죠</h2>
+  <div class="pain">
+    <div>🤔 꽃은 부담스럽고, 커피 쿠폰은 성의 없어 보이고</div>
+    <div>😵 3만원 정도 쓰고 싶은데 뭘 사야 할지 모르겠고</div>
+    <div>🙈 그 사람 취향을 사실 잘 몰라서</div>
+  </div>
+  <p class="lead">공갈빵처럼 겉만 큰 선물 말고,<br>슈크림처럼 속이 꽉 찬 선물을 골라드릴게요.</p>
+</div></section>
+
+<!-- ③ 상품: 무엇을, 얼마에 -->
+<section id="products" style="background:var(--soft)"><div class="wrap">
+  <p class="eyebrow">MENU</p>
+  <h2>선물 세트 3가지</h2>
+  <p class="muted">고르기 어렵다면 <a href="test.html">테스트</a>가 대신 골라드려요.</p>
+  <div class="products" id="product-list"></div>
+</div></section>
+
+<!-- ④ 증거·신뢰 — ★ 실제 내 가게 정보로 채우기 -->
+<section><div class="wrap">
+  <p class="eyebrow">WHY US</p>
+  <h2>믿고 보내도 되는 이유</h2>
+  <div class="trust">
+    <div><b>직접 만들어요</b><span class="star">★ 제조 방식 한 줄</span></div>
+    <div><b>재료가 달라요</b><span class="star">★ 재료 이야기 한 줄</span></div>
+    <div><b>포장까지 선물</b><span>받자마자 열고 싶은 포장으로 보내드려요</span></div>
+    <div><b>단체 주문 OK</b><span class="star">★ 단체 주문 실적</span></div>
+  </div>
+  <div class="photo-slot mt">★ 후기 캡처나 실제 포장 사진을 넣어주세요<br>(img 태그로 교체)</div>
+</div></section>
+
+<!-- ⑤ 불안 해소 -->
+<section style="padding-top:0"><div class="wrap">
+  <h2>자주 묻는 질문</h2>
+  <details><summary>언제 받을 수 있나요?</summary><p class="star">★ 주문 후 출고·픽업까지 걸리는 시간을 적어주세요</p></details>
+  <details><summary>보관은 어떻게 하나요?</summary><p class="star">★ 보관 방법과 기한</p></details>
+  <details><summary>알레르기 성분이 있나요?</summary><p class="star">★ 알레르기 유발 성분 (우유·달걀·밀·견과류 등)</p></details>
+  <details><summary>환불은 어떻게 되나요?</summary><p>식품 특성상 제작이 시작된 뒤에는 환불이 어려워요. 자세한 기준은 <a href="terms.html">이용약관·환불규정</a>에 적어두었어요.</p></details>
+</div></section>
+
+<!-- ⑥ 마감·다음 행동 -->
+<section class="center" style="background:var(--soft)"><div class="wrap">
+  <h2>아직 못 골랐다면</h2>
+  <p class="muted">6문항만 답하면 받는 사람에게 딱 맞는 세트를 골라드려요.</p>
+  <a class="btn main mt" href="test.html">1분 선물 테스트 →</a>
+</div></section>
+
+<footer><div class="wrap">
+  <p><b id="foot-name">슈크림마을 선물가게</b></p>
+  <p>문의 · <span id="foot-contact"></span></p>
+  <p class="mt"><a href="terms.html">이용약관·환불규정</a><a href="mypage.html">내 주문</a></p>
+  <p class="star mt" style="display:inline-block">★ 사업자 정보 (상호 · 대표자 · 사업자등록번호 · 통신판매업 신고번호 · 주소) — 결제 심사에 필요</p>
+</div></footer>
+
+<div class="sticky-cta"><a class="btn main" href="test.html">나에게 맞는 선물 찾기 →</a></div>
+
+<script>
+(function () {
+  var S = window.Shop, list = document.getElementById('product-list');
+  list.innerHTML = Object.keys(S.PRODUCTS).map(function (id) {
+    var p = S.PRODUCTS[id];
+    return '<div class="p-card' + (id === 'signature' ? ' best' : '') + '">' +
+      '<div class="photo-slot">★ ' + S.esc(p.name) + ' 사진</div>' +
+      '<span class="tag">' + S.esc(p.tag) + '</span>' +
+      '<h3>' + S.esc(p.name) + '</h3>' +
+      '<div class="price">' + S.won(p.price) + '</div>' +
+      '<ul>' + p.items.map(function (i) { return '<li>' + S.esc(i) + '</li>'; }).join('') + '</ul>' +
+      '<p>' + S.esc(p.desc) + '</p>' +
+      '<a class="btn block' + (id === 'signature' ? ' main' : ' ghost') + '" href="' + S.page('order', { product: id }) + '">이 세트 주문하기</a>' +
+      '</div>';
+  }).join('');
+  document.getElementById('shop-name').textContent = S.C.SHOP_NAME;
+  document.getElementById('foot-name').textContent = S.C.SHOP_NAME;
+  document.getElementById('foot-contact').textContent = S.C.CONTACT;
+})();
+</script>
+</body>
+</html>

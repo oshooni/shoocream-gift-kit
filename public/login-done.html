@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로그인 중… · 슈크림마을 선물가게</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</head>
+<body>
+<main class="wrap center" style="padding:120px 20px">
+  <div style="font-size:48px">🧁</div>
+  <h2 style="margin-top:12px" id="msg">로그인하는 중이에요…</h2>
+</main>
+<script>
+/* 카카오 로그인이 끝나면 여기로 돌아옵니다.
+   1) 고객DB(customers)에 최근 방문 · 처음 들어온 경로 기록
+   2) 테스트 결과가 있으면 test_results에 저장
+   3) 원래 있던 화면으로 돌려보내기 */
+(function () {
+  var S = window.Shop;
+  if (!S.sb) { location.href = 'index.html'; return; }
+  var next = S.store('after_login') || 'index.html';
+  var tries = 0;
+  function go() {
+    S.getUser().then(function (u) {
+      if (!u) {
+        if (++tries < 20) return setTimeout(go, 250);
+        document.getElementById('msg').textContent = '로그인이 완료되지 않았어요. 다시 시도해주세요.';
+        return;
+      }
+      S.touchCustomer(u)
+        .then(function () { return S.saveTestResult(u); })
+        .then(function () {
+          try { localStorage.removeItem('after_login'); } catch (e) {}
+          location.replace(next);
+        });
+    });
+  }
+  go();
+})();
+</script>
+</body>
+</html>

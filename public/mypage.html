@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>내 주문 · 슈크림마을 선물가게</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="logo" href="index.html">🧁 내 주문</a>
+  <div id="nav-auth"></div>
+</div></nav>
+
+<main class="wrap" style="padding:28px 20px 60px">
+  <div class="gate" id="need-login" hidden>
+    <h3>로그인하면 내 주문이 보여요</h3>
+    <p>카카오로 로그인해주세요.</p>
+    <button class="btn kakao" id="login-btn3" type="button">카카오 로그인</button>
+  </div>
+
+  <div id="me" hidden>
+    <h2 id="hello"></h2>
+    <h3 class="mt">주문 내역</h3>
+    <div class="orders" id="orders"></div>
+    <h3 class="mt">저장한 선물 테스트 결과</h3>
+    <div class="orders" id="results"></div>
+  </div>
+
+  <!-- 수업용 메모: 아래 코드에는 "내 것만 가져와" 조건이 한 줄도 없어요.
+       그런데도 내 주문만 보이는 건 수퍼베이스 RLS(행 단위 보안)가 막아주기 때문이에요.
+       로그인 = 누구인지 / RLS = 무엇을 볼 수 있는지 -->
+</main>
+
+<script>
+(function () {
+  var S = window.Shop;
+  if (!S.CONNECTED) {
+    document.getElementById('need-login').hidden = false;
+    document.getElementById('login-btn3').onclick = function () { S.alertBrowse('로그인'); };
+    return;
+  }
+  S.getUser().then(function (u) {
+    if (!u) {
+      document.getElementById('need-login').hidden = false;
+      document.getElementById('login-btn3').onclick = function () { S.login('mypage.html'); };
+      return;
+    }
+    document.getElementById('me').hidden = false;
+    var nm = (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) || '고객';
+    document.getElementById('hello').textContent = nm + '님, 반가워요 🧁';
+
+    var LABEL = { paid: ['결제 완료', 'paid'], pending: ['결제 전', 'pending'], failed: ['결제 실패', 'failed'] };
+    S.sb.from('orders').select('*').order('created_at', { ascending: false }).then(function (r) {
+      var box = document.getElementById('orders');
+      if (!r.data || !r.data.length) { box.innerHTML = '<div class="empty">아직 주문이 없어요</div>'; return; }
+      box.innerHTML = r.data.map(function (o) {
+        var p = S.PRODUCTS[o.product_id], l = LABEL[o.status] || [o.status, 'pending'];
+        return '<div class="order"><div><b>' + S.esc(p ? p.name : o.product_id) + ' × ' + o.quantity + '</b>' +
+          '<small>' + new Date(o.created_at).toLocaleString('ko-KR') + ' · ' + S.won(o.amount) + '</small></div>' +
+          '<span class="badge ' + l[1] + '">' + l[0] + '</span></div>';
+      }).join('');
+    });
+    S.sb.from('test_results').select('*').order('created_at', { ascending: false }).then(function (r) {
+      var box = document.getElementById('results');
+      if (!r.data || !r.data.length) { box.innerHTML = '<div class="empty">저장한 결과가 없어요 · <a href="test.html">테스트 하러 가기</a></div>'; return; }
+      box.innerHTML = r.data.map(function (t) {
+        var ty = S.TYPES[t.result_type], p = S.PRODUCTS[t.recommended_product];
+        return '<div class="order"><div><b>' + (ty ? ty.emoji + ' ' + S.esc(ty.name) : S.esc(t.result_type)) + '</b>' +
+          '<small>' + new Date(t.created_at).toLocaleDateString('ko-KR') + ' · 추천: ' + S.esc(p ? p.name : '') + '</small></div>' +
+          (p ? '<a class="badge pending" href="' + S.page('order', { product: p.id }) + '">주문하기</a>' : '') + '</div>';
+      }).join('');
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+/* ============================================================
+   슈크림마을 선물가게 — 스타일
+   ★ 내 브랜드 색으로 바꾸려면 아래 :root 안의 색만 바꾸세요
+   ============================================================ */
+:root{
+  --bg:#fffaf0;        /* 바탕: 크림 */
+  --card:#ffffff;
+  --ink:#3b2a1e;       /* 글자: 초코 */
+  --muted:#8a7565;
+  --line:#f0e3cc;
+  --main:#f2b544;      /* 메인: 슈크림 노랑 */
+  --main-dk:#d9962a;
+  --point:#ff8fa3;     /* 포인트: 딸기 */
+  --soft:#fff1d6;
+  --kakao:#fee500;
+  --radius:18px;
+  --font:"Pretendard","Pretendard Variable",-apple-system,"Apple SD Gothic Neo",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{word-break:keep-all;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%;display:block}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+
+/* 둘러보기 모드 배지 */
+#browse-badge{background:var(--ink);color:#fff;font-size:12.5px;text-align:center;padding:7px 12px}
+
+/* 상단 메뉴 */
+.nav{position:sticky;top:0;z-index:20;background:rgba(255,250,240,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:58px;gap:12px}
+.logo{font-weight:800;font-size:17px;text-decoration:none;display:flex;align-items:center;gap:6px;white-space:nowrap}
+#nav-auth{display:flex;align-items:center;gap:12px;font-size:14px}
+#nav-auth a{text-decoration:none;font-weight:600}
+.link-btn{background:none;border:0;color:var(--muted);font-size:14px}
+.kakao-sm{background:var(--kakao);border:0;border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:700;color:#191600}
+
+/* 버튼 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;background:var(--ink);color:#fff;font-weight:700;font-size:16px;padding:15px 26px;text-decoration:none;transition:transform .15s}
+.btn:active{transform:scale(.98)}
+.btn.main{background:var(--main);color:var(--ink)}
+.btn.kakao{background:var(--kakao);color:#191600}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.block{display:flex;width:100%}
+.btn[disabled]{opacity:.5;pointer-events:none}
+
+/* 공통 섹션 */
+section{padding:56px 0}
+.eyebrow{font-size:13px;font-weight:700;color:var(--main-dk);letter-spacing:.02em;margin-bottom:10px}
+h1,h2{text-wrap:balance}
+h1{font-size:clamp(30px,7vw,46px);line-height:1.2;font-weight:800;letter-spacing:-.04em}
+h2{font-size:clamp(24px,5.4vw,32px);line-height:1.3;font-weight:800;letter-spacing:-.035em;margin-bottom:14px}
+h3{font-size:19px;font-weight:800;letter-spacing:-.03em}
+.lead{font-size:17px;color:var(--muted);margin-top:14px}
+.muted{color:var(--muted)}
+.center{text-align:center}
+.mt{margin-top:24px}
+.star{background:#fff3b0;border-radius:4px;padding:0 4px} /* ★ 채워야 할 자리 표시 */
+
+/* 히어로 */
+.hero{padding:44px 0 36px;text-align:center}
+.hero .emoji{font-size:64px;line-height:1;margin-bottom:14px}
+.hero .btn{margin-top:26px}
+.hero .sub{font-size:13.5px;color:var(--muted);margin-top:12px}
+
+/* 공감 카드 */
+.pain{display:grid;gap:10px;margin-top:20px}
+.pain div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;font-weight:600}
+
+/* 상품 카드 */
+.products{display:grid;gap:14px;margin-top:22px}
+.p-card{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:22px;position:relative}
+.p-card.best{border-color:var(--main)}
+.p-card .tag{display:inline-block;font-size:12px;font-weight:700;background:var(--soft);color:var(--main-dk);border-radius:999px;padding:4px 10px;margin-bottom:10px}
+.p-card.best .tag{background:var(--main);color:var(--ink)}
+.p-card .price{font-size:24px;font-weight:800;margin:4px 0 10px}
+.p-card ul{list-style:none;display:grid;gap:4px;margin-bottom:12px}
+.p-card li::before{content:"· ";color:var(--main-dk);font-weight:800}
+.p-card p{font-size:14.5px;color:var(--muted);margin-bottom:16px}
+.photo-slot{aspect-ratio:4/3;border:2px dashed var(--line);border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:13px;margin-bottom:16px;background:var(--soft);padding:10px}
+
+/* 신뢰 */
+.trust{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:18px}
+.trust div{background:var(--card);border-radius:14px;padding:16px;border:1px solid var(--line)}
+.trust b{display:block;font-size:15px;margin-bottom:4px}
+.trust span{font-size:13.5px;color:var(--muted)}
+
+/* FAQ */
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-top:10px}
+summary{font-weight:700;cursor:pointer;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";float:right;color:var(--main-dk)}
+details[open] summary::after{content:"–"}
+details p{margin-top:10px;color:var(--muted);font-size:15px}
+
+/* 테스트 */
+.progress{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin:24px 0 28px}
+.progress i{display:block;height:100%;background:var(--main);transition:width .3s}
+.q-no{font-size:13px;font-weight:700;color:var(--main-dk)}
+.q-title{font-size:23px;font-weight:800;letter-spacing:-.03em;margin:6px 0 22px;line-height:1.35}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:17px 18px;font-size:16px;font-weight:600;color:var(--ink)}
+.opt:hover{border-color:var(--main)}
+.back{background:none;border:0;color:var(--muted);margin-top:18px;font-size:14px}
+
+/* 결과 */
+.result-card{background:var(--card);border-radius:24px;padding:30px 22px;text-align:center;border:1.5px solid var(--line)}
+.result-card .emoji{font-size:58px}
+.result-card .type{font-size:26px;font-weight:800;letter-spacing:-.04em;margin:8px 0 12px}
+.result-card .line{color:var(--muted)}
+.gate{margin-top:20px;background:var(--soft);border-radius:var(--radius);padding:24px 20px;text-align:center}
+.gate h3{margin-bottom:6px}
+.gate p{font-size:14.5px;color:var(--muted);margin-bottom:16px}
+.gate .btn{width:100%}
+.saved{background:#e9f8ee;color:#1d6b3b;border-radius:14px;padding:14px;text-align:center;font-weight:700;margin-top:16px}
+
+/* 폼 */
+.form{display:grid;gap:14px;margin-top:20px}
+.form label{display:grid;gap:6px;font-size:14px;font-weight:700}
+.form input,.form select,.form textarea{font:inherit;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.form input:focus,.form select:focus,.form textarea:focus{outline:none;border-color:var(--main)}
+.summary{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:18px 20px;display:grid;gap:8px}
+.summary .row{display:flex;justify-content:space-between;gap:12px;font-size:15px}
+.summary .total{border-top:1px dashed var(--line);padding-top:10px;font-size:18px;font-weight:800}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+.check{display:flex!important;grid-template-columns:none!important;gap:8px!important;align-items:flex-start;font-weight:500!important}
+.check input{margin-top:4px}
+
+/* 주문 목록 */
+.orders{display:grid;gap:10px;margin-top:16px}
+.order{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.order small{color:var(--muted);display:block}
+.badge{font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.badge.paid{background:#e9f8ee;color:#1d6b3b}
+.badge.pending{background:var(--soft);color:var(--main-dk)}
+.badge.failed{background:#ffe6ea;color:#b4233c}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--muted)}
+
+/* 푸터 */
+footer{border-top:1px solid var(--line);padding:30px 0 60px;font-size:13px;color:var(--muted);margin-top:30px}
+footer a{margin-right:12px}
+
+/* 토스트 */
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);opacity:0;transition:.25s;z-index:99;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* 하단 고정 버튼 (판매 페이지) */
+.sticky-cta{position:fixed;left:0;right:0;bottom:0;background:rgba(255,250,240,.96);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:15}
+.sticky-cta .btn{width:100%;max-width:680px;margin:0 auto;display:flex}
+body.has-sticky{padding-bottom:80px}

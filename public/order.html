@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주문하기 · 슈크림마을 선물가게</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="logo" href="index.html">🧁 주문하기</a>
+  <div id="nav-auth"></div>
+</div></nav>
+
+<main class="wrap" style="padding:28px 20px 60px">
+  <h2>주문서</h2>
+
+  <div class="gate" id="need-login" hidden>
+    <h3>주문하려면 로그인이 필요해요</h3>
+    <p>주문 내역을 안전하게 보관하려고 카카오 로그인을 받고 있어요.</p>
+    <button class="btn kakao" id="login-btn2" type="button">카카오로 로그인하고 주문하기</button>
+  </div>
+
+  <form class="form" id="order-form">
+    <label>세트 선택
+      <select id="product"></select>
+    </label>
+    <label>수량
+      <select id="qty"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+    </label>
+    <label>주문하시는 분
+      <input id="buyer-name" required maxlength="20" placeholder="이름" autocomplete="name">
+    </label>
+    <label>연락처
+      <input id="buyer-phone" required inputmode="tel" maxlength="13" placeholder="010-0000-0000" autocomplete="tel">
+    </label>
+    <label>메시지 카드 문구 <span class="muted" style="font-weight:400">(선택)</span>
+      <textarea id="message" rows="3" maxlength="100" placeholder="카드에 적어드릴 한 줄"></textarea>
+    </label>
+
+    <div class="summary">
+      <div class="row"><span id="s-name"></span><span id="s-unit"></span></div>
+      <div class="row muted"><span>수량</span><span id="s-qty"></span></div>
+      <div class="row total"><span>결제 금액</span><span id="s-total"></span></div>
+    </div>
+
+    <label class="check"><input type="checkbox" id="agree" required> <span><a href="terms.html" target="_blank">이용약관·환불규정</a>을 확인했고 동의해요</span></label>
+
+    <button class="btn main block" id="pay-btn" type="submit">결제하기</button>
+    <p class="note" id="pay-note">테스트 결제 중에는 실제로 돈이 빠져나가지 않아요.</p>
+  </form>
+</main>
+
+<script>
+/* 결제 흐름 (4주차)
+   1) 주문 만들기 → 수퍼베이스 orders 표에 저장
+      ⚠️ 금액은 브라우저가 정하지 않습니다. DB가 상품표 가격으로 다시 계산해서 덮어써요.
+   2) 포트원 결제창 열기 → DB가 계산한 금액으로
+   3) 결제 끝나면 서버(api/payment-complete)가 포트원에 직접 물어보고 금액이 맞는지 확인
+   4) 완료 화면으로 */
+(function () {
+  var S = window.Shop, P = S.PRODUCTS;
+  var sel = document.getElementById('product'), qty = document.getElementById('qty');
+  sel.innerHTML = Object.keys(P).map(function (id) {
+    return '<option value="' + id + '">' + S.esc(P[id].name) + ' · ' + S.won(P[id].price) + '</option>';
+  }).join('');
+  if (P[S.qs('product')]) sel.value = S.qs('product');
+
+  function sum() {
+    var p = P[sel.value], q = Number(qty.value);
+    document.getElementById('s-name').textContent = p.name;
+    document.getElementById('s-unit').textContent = S.won(p.price);
+    document.getElementById('s-qty').textContent = q + '개';
+    document.getElementById('s-total').textContent = S.won(p.price * q);
+  }
+  sel.onchange = qty.onchange = sum; sum();
+
+  var user = null;
+  S.getUser().then(function (u) {
+    user = u;
+    if (S.CONNECTED && !u) document.getElementById('need-login').hidden = false;
+    if (u && u.user_metadata) {
+      var nm = u.user_metadata.full_name || u.user_metadata.name || '';
+      if (nm) document.getElementById('buyer-name').value = nm;
+    }
+  });
+  document.getElementById('login-btn2').onclick = function () { S.login('order.html' + location.search); };
+
+  var btn = document.getElementById('pay-btn');
+  document.getElementById('order-form').onsubmit = function (e) {
+    e.preventDefault();
+    if (!S.CONNECTED) { S.alertBrowse('주문'); return; }
+    if (!user) { S.login('order.html' + location.search); return; }
+    if (!S.PAY_READY) { S.alertBrowse('결제'); return; }
+    if (!window.PortOne) { S.showToast('결제창을 불러오지 못했어요. 새로고침 후 다시 시도해주세요.'); return; }
+    btn.disabled = true; btn.textContent = '주문 만드는 중…';
+
+    // 1) 주문 만들기 (amount는 보내지 않아요 — DB가 계산)
+    S.sb.from('orders').insert({
+      product_id: sel.value,
+      quantity: Number(qty.value),
+      buyer_name: document.getElementById('buyer-name').value.trim(),
+      buyer_phone: document.getElementById('buyer-phone').value.trim(),
+      message: document.getElementById('message').value.trim() || null
+    }).select().single().then(function (r) {
+      if (r.error) throw r.error;
+      var order = r.data;
+      btn.textContent = '결제창 여는 중…';
+      // 2) 포트원 결제창
+      return PortOne.requestPayment({
+        storeId: S.C.PORTONE_STORE_ID,
+        channelKey: S.C.PORTONE_CHANNEL_KEY,
+        paymentId: order.id,
+        orderName: P[order.product_id].name + (order.quantity > 1 ? ' × ' + order.quantity : ''),
+        totalAmount: order.amount,
+        currency: 'KRW',
+        payMethod: 'CARD',
+        customer: { fullName: order.buyer_name, phoneNumber: order.buyer_phone.replace(/[^0-9]/g, '') },
+        redirectUrl: location.origin + '/complete.html' // 모바일은 결제 후 이 주소로 돌아와요
+      }).then(function (res) {
+        if (!res || res.code) {
+          S.showToast((res && res.message) || '결제가 취소됐어요.');
+          btn.disabled = false; btn.textContent = '결제하기';
+          return;
+        }
+        // 3) 서버에서 금액 확인 → 4) 완료 화면
+        location.href = S.page('complete', { paymentId: res.paymentId });
+      });
+    }).catch(function (err) {
+      console.error(err);
+      S.showToast('주문을 만들지 못했어요: ' + (err.message || err));
+      btn.disabled = false; btn.textContent = '결제하기';
+    });
+  };
+})();
+</script>
+</body>
+</html>

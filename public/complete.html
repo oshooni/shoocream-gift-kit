@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주문 완료 · 슈크림마을 선물가게</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</head>
+<body>
+<nav class="nav"><div class="wrap">
+  <a class="logo" href="index.html">🧁 주문 완료</a>
+  <div id="nav-auth"></div>
+</div></nav>
+
+<main class="wrap center" style="padding:60px 20px">
+  <div style="font-size:56px" id="icon">⏳</div>
+  <h2 style="margin-top:12px" id="title">결제를 확인하고 있어요…</h2>
+  <p class="muted" id="desc">잠시만 기다려주세요. 창을 닫지 마세요.</p>
+  <div class="summary" id="detail" style="text-align:left;margin-top:26px" hidden></div>
+  <div class="mt" id="actions" hidden>
+    <a class="btn main" href="mypage.html">내 주문 보기</a>
+    <a class="btn ghost" href="index.html" style="margin-left:6px">홈으로</a>
+  </div>
+</main>
+
+<script>
+/* 결제 직후 도착하는 화면.
+   브라우저가 "결제됐어요"라고 말해도 믿지 않고,
+   서버(api/payment-complete)가 포트원에 직접 확인한 결과만 믿습니다. */
+(function () {
+  var S = window.Shop;
+  var paymentId = S.qs('paymentId'), code = S.qs('code');
+  function show(icon, title, desc) {
+    document.getElementById('icon').textContent = icon;
+    document.getElementById('title').textContent = title;
+    document.getElementById('desc').textContent = desc;
+    document.getElementById('actions').hidden = false;
+  }
+  if (!S.CONNECTED) { show('🧁', '둘러보기 모드예요', '설정을 마치면 결제 후 이 화면에서 주문 내역을 보여드려요.'); return; }
+  if (code) { show('😢', '결제가 완료되지 않았어요', S.qs('message') || '다시 시도해주세요.'); return; }
+  if (!paymentId) { show('🧁', '확인할 주문이 없어요', ''); return; }
+
+  fetch('/api/payment-complete', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ paymentId: paymentId })
+  }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+    .then(function (res) {
+      if (!res.ok || res.j.status !== 'paid') {
+        show('⚠️', '결제 확인에 문제가 있어요', res.j.message || '문의해주시면 바로 확인해드릴게요.');
+        return;
+      }
+      show('🎉', '주문이 완료됐어요!', '정성껏 준비해서 보내드릴게요.');
+      return S.sb.from('orders').select('*').eq('id', paymentId).maybeSingle().then(function (o) {
+        if (!o.data) return;
+        var d = o.data, p = S.PRODUCTS[d.product_id];
+        var box = document.getElementById('detail');
+        box.innerHTML =
+          '<div class="row"><span>상품</span><span>' + S.esc(p ? p.name : d.product_id) + ' × ' + d.quantity + '</span></div>' +
+          '<div class="row"><span>받는 분</span><span>' + S.esc(d.buyer_name) + '</span></div>' +
+          '<div class="row total"><span>결제 금액</span><span>' + S.won(d.amount) + '</span></div>';
+        box.hidden = false;
+      });
+    })
+    .catch(function () { show('⚠️', '결제 확인 중 오류가 났어요', '내 주문에서 상태를 확인해주세요.'); });
+})();
+</script>
+</body>
+</html>
